@@ -1,9 +1,3 @@
-
-
-
-
-
-
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -16,42 +10,17 @@
                             <div class="col-md-12">
                               <div class="card company-acc-info">
                                 <div class="card-body">
-                                <div class="row row d-flex flex-wrap" id="orderSummaryInfo">
-                                
-                                </div></div></div></div>
-                            </div></div>  
-                            <div class="col-md-4"> 
-                                <div class="card card-primary">
-                                    <div class="card-header">
-                                    <h3 class="card-title">Billing Address :</h3>
-                                    </div>
-                                    <div class="card-body" id="order_summ_billing_address">
-                                    
-                                    </div>
+                                   <div class="row row d-flex flex-wrap" id="orderSummaryInfo"></div>
                                 </div>
-                                <div class="card card-primary">
-                                    <div class="card-header">
-                                    <h3 class="card-title">Delivery Address :</h3>
-                                    </div>
-                                    <div class="card-body" id="order_deli_billing_address">
-                                    
-                                    </div>
                                 </div>
+                              </div>
                             </div>
+                </div>                            
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-12">
-        <div class="middle_content pos-relative mt-3 mb-3">
-            <div class="row">
-                <div class="col-md-12"><h3 class="table-title mt-0">Product Details</h3></div> 
-                <div class="col-md-12">
-                    <table class="table" id="comp_acc_datatable"></table>
-                </div>
-            </div>
-        </div>
-    </div>            
+             
     </div>
 </div>
 <script type="text/javascript" src="/jquery.dataTables.min.js"></script>
@@ -106,9 +75,7 @@ $(function () {
                             deliveryModeDiscription = '';
                         }
 
-                        $('#order_Number_val').text(order_Number_val);
-                        $('#processing_status').text(processing_status);
-
+                        
                         orderSummaryDetail +='<div class="col-md-3 col-xs-6 mb-2"><label>PO Number</label><b>'+response.customersOrderReference+'</b></div>'
                         orderSummaryDetail +='<div class="col-md-3 col-xs-6 mb-2"><label>Requested Receipt Date</label><b>'+response.requestDeliveryby+'</b></div>'
                         orderSummaryDetail +='<div class="col-md-3 col-xs-6 mb-2"><label>Estimated Shipping Date</label><b>'+estshipdate+'</b></div>'
@@ -118,27 +85,22 @@ $(function () {
                         orderSummaryDetail +='<div class="col-md-3 col-xs-6 mb-2"><label>Attention To</label><b>'+response.shiptoAttention+'</b></div>'
                         orderSummaryDetail +='<div class="col-md-12 col-xs-6 mb-2"><div class="horizontal_line"></div></div>'
                         orderSummaryDetail +='<div class="col-md-3 col-xs-6 mb-2"><label>Sub total</label><b>$'+Number(response.totalAmountLessFreight).toFixed(2)+'</b></div>'
-                        orderSummaryBillAddr +='<p>'+response.billToComposite+'</p>'
-                        orderSummaryDeliveryAddr +='<p>'+response.shipToComposite+'</p>'
-
-                        $('#orderSummaryInfo').html(orderSummaryDetail);
-                        $('#order_summ_billing_address').html(orderSummaryBillAddr);
-                        $('#order_deli_billing_address').html(orderSummaryDeliveryAddr);
-                        pakingdetailFun();
-
-                        productDetailTable+='<thead>'
-                        productDetailTable+='<tr>'
-                        productDetailTable+='<th scope="col">#</th>'
-                        productDetailTable+='<th scope="col">Item No</th>'
-                        productDetailTable+='<th scope="col">Name</th>'
-                        productDetailTable+='<th scope="col">Quantity</th>'
-                        productDetailTable+='<th scope="col">Unit Price</th>'
-                        productDetailTable+='<th scope="col">Net Amount</th>'
-                        productDetailTable+='</tr>'
-                        productDetailTable+='</thead>'
-                        productDetailTable +='<tbody id="comp_acc_datatable_body">'
+                        
+                        
+                        orderSummaryDetail+='<table class="table" id="comp_acc_datatable">'
+                        orderSummaryDetail+='<thead>'
+                        orderSummaryDetail+='<thead>'
+                        orderSummaryDetail+='<tr>'
+                        orderSummaryDetail+='<th scope="col">#</th>'
+                        orderSummaryDetail+='<th scope="col">Item No</th>'
+                        orderSummaryDetail+='<th scope="col">Name</th>'
+                        orderSummaryDetail+='<th scope="col">Quantity</th>'
+                        orderSummaryDetail+='<th scope="col">Unit Price</th>'
+                        orderSummaryDetail+='<th scope="col">Net Amount</th>'
+                        orderSummaryDetail+='</tr>'
+                        orderSummaryDetail+='</thead>'
+                        orderSummaryDetail +='<tbody id="comp_acc_datatable_body">'
                         for (var i = 0; i < response.orderProductDetailsModel.length; i++) {
-                        $('#comp_acc_datatable').html('<div class="w-100 text-center loader-1"><svg version="1.1" id="L4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve" style="width:100px"><circle fill="var(--btn-secondary)" stroke="none" cx="6" cy="50" r="6"><animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.1"></animate></circle><circle fill="var(--btn-secondary)" stroke="none" cx="26" cy="50" r="6"> <animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.2"></animate></circle><circle fill="var(--btn-secondary)" stroke="none" cx="46" cy="50" r="6"> <animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.3"></animate></circle></svg></div>'); 
                             var productnumber = response.orderProductDetailsModel[i].productnumber ? response.orderProductDetailsModel[i].productnumber:"";
                             var portalproductname = response.orderProductDetailsModel[i].portalproductname ? response.orderProductDetailsModel[i].portalproductname:"";
                             var portalproductDescription = response.orderProductDetailsModel[i].portalproductDescription ? response.orderProductDetailsModel[i].portalproductDescription:"";
@@ -146,19 +108,18 @@ $(function () {
                             var salsePrice = response.orderProductDetailsModel[i].salsePrice ? response.orderProductDetailsModel[i].salsePrice:"";
                             var extendedamount = response.orderProductDetailsModel[i].extendedamount ? response.orderProductDetailsModel[i].extendedamount:"";
 
-                            productDetailTable +='<tr>'
-                            productDetailTable +='<td>' + (i + 1) + '</td>'
-                            productDetailTable +='<td data-label="Item No"><b>' + productnumber + '</b></td>'
-                            productDetailTable +='<td data-label="Name">' + portalproductname +'<p>'+portalproductDescription+ '</p></td>'
-                            productDetailTable +='<td data-label="Quantity">' + Number(quantity).toFixed(0) + '</td>'
-                            //productDetailTable +='<td>EA(Static)</td>'
-                            productDetailTable +='<td data-label="Unit Price">$'+ Number(salsePrice).toFixed(2) +'</td>'
-                            productDetailTable +='<td data-label="Net Amount">$' + Number(extendedamount).toFixed(2) + '</td>'
-                            productDetailTable +='</tr>' 
+                            orderSummaryDetail +='<tr>'
+                            orderSummaryDetail +='<td>' + (i + 1) + '</td>'
+                            orderSummaryDetail +='<td data-label="Item No"><b>' + productnumber + '</b></td>'
+                            orderSummaryDetail +='<td data-label="Name">' + portalproductname +'<p>'+portalproductDescription+ '</p></td>'
+                            orderSummaryDetail +='<td data-label="Quantity">' + Number(quantity).toFixed(0) + '</td>'
+                            orderSummaryDetail +='<td data-label="Unit Price">$'+ Number(salsePrice).toFixed(2) +'</td>'
+                            orderSummaryDetail +='<td data-label="Net Amount">$' + Number(extendedamount).toFixed(2) + '</td>'
+                            orderSummaryDetail +='</tr>' 
                         } 
-                        productDetailTable+='</tbody>' 
-                        $('#comp_acc_datatable .loader-1').hide();              
-                        $('#comp_acc_datatable').html(productDetailTable);
+                        orderSummaryDetail+='</tbody>' 
+                        orderSummaryDetail+='</table>'
+                        $('#orderSummaryInfo').html(orderSummaryDetail);
                         $('#comp_acc_datatable').DataTable({
                             paging: true,    responsive: true,                
                             searching: true, ordering: true,
