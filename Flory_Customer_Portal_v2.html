@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flory Customer Portal</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #C8102E;
+    --red-dark: #a30d25;
+    --red-light: #fdf0f2;
+    --red-mid: #f5c5cc;
+    --dark: #111318;
+    --sidebar-bg: #14171e;
+    --sidebar-hover: #1e2330;
+    --text: #1a1d23;
+    --text-2: #5a5f6e;
+    --text-3: #9499a8;
+    --border: #e4e6ec;
+    --bg: #f4f5f8;
+    --white: #ffffff;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; }
+
+  /* ─── LOGIN ─── */
+  #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; width: 100%; background: var(--bg); }
+  .login-box { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 40px 36px; width: 100%; max-width: 420px; }
+  .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+  .login-logo-mark { width: 42px; height: 42px; background: var(--red); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 700; }
+  .login-logo-text { font-size: 18px; font-weight: 600; color: var(--text); }
+  .login-logo-sub { font-size: 12px; color: var(--text-3); }
+  .login-h { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: var(--text-2); margin-bottom: 24px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--text-2); }
+  .field input { height: 40px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; outline: none; color: var(--text); background: var(--white); transition: border-color .15s; }
+  .field input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,.08); }
+  .btn-full { width: 100%; height: 40px; background: var(--red); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: background .15s; }
+  .btn-full:hover { background: var(--red-dark); }
+  .login-divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; color: var(--text-3); font-size: 12px; }
+  .login-divider:before, .login-divider:after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .btn-outline-full { width: 100%; height: 40px; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: border-color .15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-outline-full:hover { border-color: var(--red); color: var(--red); }
+  .login-footer { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-3); }
+  .login-footer a { color: var(--red); text-decoration: none; font-weight: 500; }
+
+  /* ─── REGISTER ─── */
+  #register-screen { display: none; align-items: center; justify-content: center; min-height: 100vh; width: 100%; background: var(--bg); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-field { display: flex; flex-direction: column; gap: 5px; }
+  .form-field label { font-size: 12px; font-weight: 500; color: var(--text-2); }
+  .form-field input, .form-field select, .form-field textarea { height: 38px; padding: 0 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; background: var(--white); }
+  .form-field textarea { height: 70px; padding: 9px 11px; resize: none; }
+  .form-field input:focus, .form-field select:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,.07); }
+  .form-field .hint { font-size: 11px; color: var(--text-3); }
+  .validate-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 12px; margin: 6px 0 0; }
+  .validate-row.ok { background: var(--green-light); color: var(--green); }
+  .validate-row.checking { background: var(--blue-light); color: var(--blue); }
+
+  /* ─── APP SHELL ─── */
+  #app-shell { display: none; width: 100%; min-height: 100vh; }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; flex-shrink: 0; }
+  .sidebar-brand { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; gap: 11px; }
+  .sidebar-logo-mark { width: 34px; height: 34px; background: var(--red); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+  .sidebar-brand-name { font-size: 14px; font-weight: 600; color: #fff; }
+  .sidebar-brand-tag { font-size: 10px; color: rgba(255,255,255,.35); margin-top: 1px; }
+  .sidebar-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .nav-section-label { font-size: 10px; font-weight: 500; color: rgba(255,255,255,.25); letter-spacing: .7px; text-transform: uppercase; padding: 10px 10px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 7px; color: rgba(255,255,255,.55); cursor: pointer; font-size: 13px; font-weight: 400; transition: all .15s; border: none; background: none; font-family: inherit; width: 100%; text-align: left; }
+  .nav-item i { font-size: 17px; flex-shrink: 0; }
+  .nav-item:hover { background: var(--sidebar-hover); color: rgba(255,255,255,.85); }
+  .nav-item.active { background: var(--red); color: #fff; font-weight: 500; }
+  .nav-item .nav-badge { margin-left: auto; font-size: 10px; background: rgba(255,255,255,.15); color: rgba(255,255,255,.8); padding: 2px 7px; border-radius: 20px; }
+  .nav-item.active .nav-badge { background: rgba(255,255,255,.25); }
+  .sidebar-user { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; gap: 10px; }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--red); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .user-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.8); }
+  .user-email { font-size: 11px; color: rgba(255,255,255,.35); }
+  .sidebar-logout { background: none; border: none; color: rgba(255,255,255,.4); cursor: pointer; padding: 4px; border-radius: 4px; margin-left: auto; font-size: 15px; transition: color .15s; }
+  .sidebar-logout:hover { color: rgba(255,255,255,.8); }
+
+  /* ─── MAIN ─── */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar { height: 60px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; flex-shrink: 0; position: sticky; top: 0; z-index: 10; }
+  .topbar-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-btn { display: flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all .15s; }
+  .topbar-btn.primary { background: var(--red); color: #fff; border: none; }
+  .topbar-btn.primary:hover { background: var(--red-dark); }
+  .topbar-btn.ghost { background: none; border: 1px solid var(--border); color: var(--text-2); }
+  .topbar-btn.ghost:hover { border-color: var(--red); color: var(--red); }
+  .content { padding: 28px; flex: 1; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ─── CARDS ─── */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .card-subtitle { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+  /* ─── MY EQUIPMENT GRID ─── */
+  /* Open grid — no separate detail page, docs inline */
+  .eq-table { width: 100%; border-collapse: collapse; }
+  .eq-table th { text-align: left; font-size: 11px; font-weight: 500; color: var(--text-3); padding: 10px 14px; background: var(--bg); border-bottom: 1px solid var(--border); letter-spacing: .3px; }
+  .eq-table td { padding: 0; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  .eq-table tr:last-child > td { border-bottom: none; }
+
+  /* Each row is expandable — main row */
+  .eq-main-row td { padding: 13px 14px; cursor: pointer; }
+  .eq-main-row:hover td { background: #fafafa; }
+  .eq-main-row.open td { background: #fdf9f9; border-bottom: none; }
+
+  /* Expanded panel */
+  .eq-expand-row { display: none; }
+  .eq-expand-row.open { display: table-row; }
+  .eq-expand-panel { background: #fdf9f9; border-top: 1px dashed var(--red-mid); border-bottom: 1px solid var(--border); padding: 16px 20px 20px; }
+  .expand-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  .eq-model-name { font-weight: 500; color: var(--text); }
+  .eq-serial { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+  .badge.green { background: var(--green-light); color: var(--green); }
+  .badge.amber { background: var(--amber-light); color: var(--amber); }
+  .badge.blue { background: var(--blue-light); color: var(--blue); }
+  .badge.gray { background: var(--bg); color: var(--text-3); border: 1px solid var(--border); }
+
+  .eq-action-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; border: 1px solid var(--border); background: none; color: var(--text-2); transition: all .15s; }
+  .eq-action-btn:hover { border-color: var(--red); color: var(--red); }
+  .eq-action-btn.danger:hover { background: var(--red-light); border-color: var(--red-mid); color: var(--red); }
+
+  /* Detail fields inside expand */
+  .detail-section-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+  .detail-field { display: flex; flex-direction: column; gap: 3px; margin-bottom: 10px; }
+  .detail-label { font-size: 11px; color: var(--text-3); }
+  .detail-val { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* Docs inline */
+  .doc-inline-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 6px; cursor: pointer; transition: border-color .15s; background: var(--white); }
+  .doc-inline-item:hover { border-color: var(--red); }
+  .doc-icon-box { width: 30px; height: 30px; border-radius: 6px; background: var(--red-light); color: var(--red); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .doc-name { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; }
+  .doc-meta { font-size: 10px; color: var(--text-3); }
+
+  /* Nested serials */
+  .nested-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--white); border-radius: var(--radius-sm); margin-bottom: 5px; border: 1px solid var(--border); }
+  .nested-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; }
+  .nested-label { font-size: 11px; color: var(--text-3); min-width: 80px; }
+  .nested-val { font-size: 11px; font-weight: 500; color: var(--text); font-family: monospace; }
+
+  /* Expand chevron */
+  .expand-chevron { transition: transform .2s; font-size: 15px; color: var(--text-3); }
+  .eq-main-row.open .expand-chevron { transform: rotate(180deg); color: var(--red); }
+
+  /* ─── ADD MACHINE MODAL ─── */
+  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: var(--white); border-radius: 14px; padding: 28px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .modal-title { font-size: 16px; font-weight: 600; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 20px; padding: 2px; border-radius: 4px; }
+  .modal-close:hover { color: var(--text); }
+  .section-divider { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; margin: 18px 0 12px; }
+  .modal-footer { display: flex; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .btn-modal-primary { flex: 1; height: 40px; background: var(--red); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+  .btn-modal-primary:hover { background: var(--red-dark); }
+  .btn-modal-cancel { height: 40px; padding: 0 18px; background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; font-family: inherit; color: var(--text-2); }
+  .btn-modal-cancel:hover { border-color: var(--text-2); }
+
+  /* ─── PROFILE & DEALER (combined) ─── */
+  .profile-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+  .profile-avatar-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 20px; text-align: center; }
+  .profile-avatar-big { width: 72px; height: 72px; border-radius: 50%; background: var(--red); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 600; margin: 0 auto 14px; }
+  .profile-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .profile-meta { font-size: 12px; color: var(--text-3); margin-bottom: 16px; }
+  .profile-tag { display: inline-block; padding: 4px 12px; background: var(--red-light); color: var(--red); border-radius: 20px; font-size: 11px; font-weight: 500; }
+  .dealer-tag { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 14px; }
+
+  /* ─── TOAST ─── */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: #fff; padding: 12px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    .sidebar { width: 60px; }
+    .sidebar-brand-name, .sidebar-brand-tag, .nav-section-label, .nav-item span, .nav-badge, .user-name, .user-email { display: none; }
+    .nav-item { justify-content: center; padding: 10px; }
+    .sidebar-user { justify-content: center; }
+    .profile-grid { grid-template-columns: 1fr; }
+    .expand-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-mark">F</div>
+      <div>
+        <div class="login-logo-text">Flory Industries</div>
+        <div class="login-logo-sub">Customer Portal</div>
+      </div>
+    </div>
+    <div class="login-h">Welcome back</div>
+    <div class="login-sub">Sign in to manage your equipment and documents</div>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" placeholder="you@company.com" value="john.farmer@example.com" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" placeholder="••••••••" value="password123" />
+    </div>
+    <button class="btn-full" onclick="doLogin()">Sign in</button>
+    <div class="login-divider">or</div>
+    <button class="btn-outline-full" onclick="showRegister()">
+      <i class="ti ti-link" style="font-size:16px"></i>
+      Link existing Flory account
+    </button>
+    <div class="login-footer">Don't have an account? <a href="#" onclick="showRegister()">Register here</a></div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div id="register-screen">
+  <div class="login-box" style="max-width:480px;">
+    <div class="login-logo">
+      <div class="login-logo-mark">F</div>
+      <div>
+        <div class="login-logo-text">Flory Industries</div>
+        <div class="login-logo-sub">Create your account</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>First name</label><input type="text" placeholder="John" /></div>
+      <div class="form-field"><label>Last name</label><input type="text" placeholder="Doe" /></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-field"><label>Email address</label><input type="email" placeholder="you@company.com" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Phone number</label><input type="tel" placeholder="+1 (559) 000-0000" /></div>
+      <div class="form-field"><label>Company name (optional)</label><input type="text" placeholder="Your farm or co." /></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-field">
+        <label>Customer ShipTo name</label>
+        <input type="text" id="reg-shipto" placeholder="As it appears on Flory invoices" oninput="validateShipTo()" />
+        <span class="hint" style="font-size:11px;color:var(--text-3)">Validated against your GP account in Dataverse</span>
+        <div id="shipto-ok" class="validate-row ok" style="display:none"><i class="ti ti-circle-check"></i> Account found — linked to Flory GP record</div>
+      </div>
+    </div>
+    <div class="form-row full">
+      <div class="form-field">
+        <label>Choose your Flory dealer</label>
+        <select>
+          <option value="">Select dealer</option>
+          <option>WG — Western Group</option>
+          <option>PRTS — Parts &amp; Service</option>
+          <option>RBT — Robertson Tractor</option>
+          <option>WARR — Warranty Dealer</option>
+        </select>
+        <span class="hint" style="font-size:11px;color:var(--text-3)">You can change this later in account settings</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Password</label><input type="password" placeholder="Min. 8 characters" /></div>
+      <div class="form-field"><label>Confirm password</label><input type="password" placeholder="Re-enter" /></div>
+    </div>
+    <button class="btn-full" style="margin-top:6px" onclick="doLogin()">Create account &amp; sign in</button>
+    <div class="login-footer" style="margin-top:14px">Already have an account? <a href="#" onclick="backToLogin()">Sign in</a></div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app-shell">
+  <!-- SIDEBAR — 3 nav items only: My Equipment, Account Settings -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo-mark">F</div>
+      <div>
+        <div class="sidebar-brand-name">Flory Portal</div>
+        <div class="sidebar-brand-tag">Customer Account</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item active" id="nav-machinery" onclick="showPage('machinery',this)">
+        <i class="ti ti-tractor"></i><span>My Equipment</span>
+        <span class="nav-badge" id="equip-count">4</span>
+      </button>
+      <div class="nav-section-label">Account</div>
+      <button class="nav-item" id="nav-account" onclick="showPage('account',this)">
+        <i class="ti ti-user-cog"></i><span>Account Settings</span>
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div style="min-width:0">
+        <div class="user-name">John Doe</div>
+        <div class="user-email">john@example.com</div>
+      </div>
+      <button class="sidebar-logout" onclick="doLogout()" title="Sign out"><i class="ti ti-logout"></i></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">My Equipment</div>
+      <div class="topbar-right">
+        <button class="topbar-btn primary" id="topbar-add-btn" onclick="openAddMachine()">
+          <i class="ti ti-plus" style="font-size:15px"></i> Add Equipment
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ MY EQUIPMENT PAGE — open grid, expand rows inline, docs in-row ══ -->
+      <div class="page active" id="page-machinery">
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="card-header" style="padding:16px 20px;margin-bottom:0;border-bottom:1px solid var(--border)">
+            <div>
+              <div class="card-title">My Equipment</div>
+              <div class="card-subtitle">Click any row to expand details and access manuals — no separate detail page needed</div>
+            </div>
+          </div>
+          <table class="eq-table" style="table-layout:fixed;width:100%">
+            <colgroup>
+              <col style="width:28%"><col style="width:18%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:16%"><col style="width:8%">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Serial number</th>
+                <th>Status</th>
+                <th>Year</th>
+                <th>Dealer</th>
+                <th>Actions</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="machine-tbody">
+
+              <!-- ROW 1 -->
+              <tr class="eq-main-row" onclick="toggleExpand('eq1',this)">
+                <td><div class="eq-model-name">V62 Super Sweeper</div><div class="eq-serial">Model: V62</div></td>
+                <td style="font-family:monospace;font-size:12px">SN-2024-0892</td>
+                <td><span class="badge green"><i class="ti ti-circle-check" style="font-size:10px"></i> Valid</span></td>
+                <td>2024</td>
+                <td><span class="badge gray">WG</span></td>
+                <td onclick="event.stopPropagation()" style="display:flex;gap:6px;padding:13px 14px">
+                  <button class="eq-action-btn danger" onclick="removeMachine(this)"><i class="ti ti-trash" style="font-size:13px"></i> Remove</button>
+                </td>
+                <td style="text-align:center"><i class="ti ti-chevron-down expand-chevron"></i></td>
+              </tr>
+              <tr class="eq-expand-row" id="eq1">
+                <td colspan="7" style="padding:0">
+                  <div class="eq-expand-panel">
+                    <div class="expand-grid">
+                      <div>
+                        <div class="detail-section-label">Equipment details</div>
+                        <div class="detail-field"><div class="detail-label">Model code</div><div class="detail-val">V62</div></div>
+                        <div class="detail-field"><div class="detail-label">Primary serial</div><div class="detail-val" style="font-family:monospace">SN-2024-0892</div></div>
+                        <div class="detail-field"><div class="detail-label">Year / Make</div><div class="detail-val">2024 · Flory</div></div>
+                        <div class="detail-field"><div class="detail-label">ESN / VIN</div><div class="detail-val" style="font-family:monospace">VIN-009234</div></div>
+                        <div class="detail-field"><div class="detail-label">Dealer</div><div class="detail-val">WG — Western Group</div></div>
+                        <div style="margin-top:10px">
+                          <div class="detail-section-label">Nested serials</div>
+                          <div class="nested-row"><div class="nested-dot"></div><div class="nested-label">Engine SN</div><div class="nested-val">K-9872-JD</div></div>
+                          <div class="nested-row"><div class="nested-dot"></div><div class="nested-label">Blower SN</div><div class="nested-val">BL-0023-F</div></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Manuals — V62 model code</div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Parts Manual</div><div class="doc-meta">V62 · PDF · 12.4 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Operator's Manual</div><div class="doc-meta">V62 · PDF · 8.1 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Electrical Manual</div><div class="doc-meta">V62 · PDF · 5.7 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">HM Manual</div><div class="doc-meta">V62 · PDF · 3.2 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Upgrade pathways</div>
+                        <div style="background:var(--amber-light);border:1px solid #fde68a;border-radius:7px;padding:12px;margin-bottom:8px">
+                          <div style="font-size:12px;font-weight:500;color:var(--amber)">VisionSteer Technology</div>
+                          <div style="font-size:11px;color:#78450a;margin-top:3px">Contact dealer WG to enquire</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- ROW 2 -->
+              <tr class="eq-main-row" onclick="toggleExpand('eq2',this)">
+                <td><div class="eq-model-name">8772 Harvester</div><div class="eq-serial">Model: 8772</div></td>
+                <td style="font-family:monospace;font-size:12px">SN-2021-4471</td>
+                <td><span class="badge green"><i class="ti ti-circle-check" style="font-size:10px"></i> Valid</span></td>
+                <td>2021</td>
+                <td><span class="badge gray">PRTS</span></td>
+                <td onclick="event.stopPropagation()" style="display:flex;gap:6px;padding:13px 14px">
+                  <button class="eq-action-btn danger" onclick="removeMachine(this)"><i class="ti ti-trash" style="font-size:13px"></i> Remove</button>
+                </td>
+                <td style="text-align:center"><i class="ti ti-chevron-down expand-chevron"></i></td>
+              </tr>
+              <tr class="eq-expand-row" id="eq2">
+                <td colspan="7" style="padding:0">
+                  <div class="eq-expand-panel">
+                    <div class="expand-grid">
+                      <div>
+                        <div class="detail-section-label">Equipment details</div>
+                        <div class="detail-field"><div class="detail-label">Model code</div><div class="detail-val">8772</div></div>
+                        <div class="detail-field"><div class="detail-label">Primary serial</div><div class="detail-val" style="font-family:monospace">SN-2021-4471</div></div>
+                        <div class="detail-field"><div class="detail-label">Year / Make</div><div class="detail-val">2021 · Flory</div></div>
+                        <div class="detail-field"><div class="detail-label">ESN / VIN</div><div class="detail-val" style="font-family:monospace">VIN-004112</div></div>
+                        <div class="detail-field"><div class="detail-label">Dealer</div><div class="detail-val">PRTS — Parts &amp; Service</div></div>
+                        <div style="margin-top:10px">
+                          <div class="detail-section-label">Nested serials</div>
+                          <div class="nested-row"><div class="nested-dot"></div><div class="nested-label">Engine SN</div><div class="nested-val">E-4421-CT</div></div>
+                          <div class="nested-row"><div class="nested-dot"></div><div class="nested-label">Conveyor SN</div><div class="nested-val">CV-1122-F</div></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Manuals — 8772 model code</div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Parts Manual</div><div class="doc-meta">8772 · PDF · 15.9 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Operator's Manual</div><div class="doc-meta">8772 · PDF · 9.4 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Electrical Manual</div><div class="doc-meta">8772 · PDF · 6.8 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">HM Manual</div><div class="doc-meta">8772 · PDF · 4.1 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Upgrade pathways</div>
+                        <div style="background:var(--blue-light);border:1px solid #bfdbfe;border-radius:7px;padding:12px">
+                          <div style="font-size:12px;font-weight:500;color:var(--blue)">Dust Reduction Kit</div>
+                          <div style="font-size:11px;color:#1e3a8a;margin-top:3px">Contact dealer PRTS to enquire</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- ROW 3 -->
+              <tr class="eq-main-row" onclick="toggleExpand('eq3',this)">
+                <td><div class="eq-model-name">CP8700 Conditioner</div><div class="eq-serial">Model: CP8700</div></td>
+                <td style="font-family:monospace;font-size:12px">SN-2022-1103</td>
+                <td><span class="badge green"><i class="ti ti-circle-check" style="font-size:10px"></i> Valid</span></td>
+                <td>2022</td>
+                <td><span class="badge gray">WG</span></td>
+                <td onclick="event.stopPropagation()" style="display:flex;gap:6px;padding:13px 14px">
+                  <button class="eq-action-btn danger" onclick="removeMachine(this)"><i class="ti ti-trash" style="font-size:13px"></i> Remove</button>
+                </td>
+                <td style="text-align:center"><i class="ti ti-chevron-down expand-chevron"></i></td>
+              </tr>
+              <tr class="eq-expand-row" id="eq3">
+                <td colspan="7" style="padding:0">
+                  <div class="eq-expand-panel">
+                    <div class="expand-grid">
+                      <div>
+                        <div class="detail-section-label">Equipment details</div>
+                        <div class="detail-field"><div class="detail-label">Model code</div><div class="detail-val">CP8700</div></div>
+                        <div class="detail-field"><div class="detail-label">Primary serial</div><div class="detail-val" style="font-family:monospace">SN-2022-1103</div></div>
+                        <div class="detail-field"><div class="detail-label">Year / Make</div><div class="detail-val">2022 · Flory</div></div>
+                        <div class="detail-field"><div class="detail-label">ESN / VIN</div><div class="detail-val" style="font-family:monospace">VIN-002234</div></div>
+                        <div class="detail-field"><div class="detail-label">Dealer</div><div class="detail-val">WG — Western Group</div></div>
+                        <div style="margin-top:10px">
+                          <div class="detail-section-label">Nested serials</div>
+                          <div class="nested-row"><div class="nested-dot"></div><div class="nested-label">Engine SN</div><div class="nested-val">E-8830-JD</div></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Manuals — CP8700 model code</div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Parts Manual</div><div class="doc-meta">CP8700 · PDF · 11.2 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Operator's Manual</div><div class="doc-meta">CP8700 · PDF · 7.5 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Electrical Manual</div><div class="doc-meta">CP8700 · PDF · 4.9 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">HM Manual</div><div class="doc-meta">CP8700 · PDF · 2.8 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Upgrade pathways</div>
+                        <div style="font-size:12px;color:var(--text-3)">No upgrades currently available</div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- ROW 4 -->
+              <tr class="eq-main-row" onclick="toggleExpand('eq4',this)">
+                <td><div class="eq-model-name">VR700 Shaker</div><div class="eq-serial">Model: VR700</div></td>
+                <td style="font-family:monospace;font-size:12px">SN-2023-0345</td>
+                <td><span class="badge amber"><i class="ti ti-clock" style="font-size:10px"></i> Pending</span></td>
+                <td>2023</td>
+                <td><span class="badge gray">RBT</span></td>
+                <td onclick="event.stopPropagation()" style="display:flex;gap:6px;padding:13px 14px">
+                  <button class="eq-action-btn danger" onclick="removeMachine(this)"><i class="ti ti-trash" style="font-size:13px"></i> Remove</button>
+                </td>
+                <td style="text-align:center"><i class="ti ti-chevron-down expand-chevron"></i></td>
+              </tr>
+              <tr class="eq-expand-row" id="eq4">
+                <td colspan="7" style="padding:0">
+                  <div class="eq-expand-panel">
+                    <div class="expand-grid">
+                      <div>
+                        <div class="detail-section-label">Equipment details</div>
+                        <div class="detail-field"><div class="detail-label">Model code</div><div class="detail-val">VR700</div></div>
+                        <div class="detail-field"><div class="detail-label">Primary serial</div><div class="detail-val" style="font-family:monospace">SN-2023-0345</div></div>
+                        <div class="detail-field"><div class="detail-label">Year / Make</div><div class="detail-val">2023 · Flory</div></div>
+                        <div class="detail-field"><div class="detail-label">ESN / VIN</div><div class="detail-val" style="font-family:monospace">VIN-007891</div></div>
+                        <div class="detail-field"><div class="detail-label">Dealer</div><div class="detail-val">RBT — Robertson Tractor</div></div>
+                        <div style="margin-top:10px">
+                          <div class="detail-section-label">Nested serials</div>
+                          <div class="nested-row"><div class="nested-dot"></div><div class="nested-label">Engine SN</div><div class="nested-val">Pending validation</div></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Manuals — VR700 model code</div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Parts Manual</div><div class="doc-meta">VR700 · PDF · 13.1 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Operator's Manual</div><div class="doc-meta">VR700 · PDF · 8.8 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">Electrical Manual</div><div class="doc-meta">VR700 · PDF · 5.3 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                        <div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">HM Manual</div><div class="doc-meta">VR700 · PDF · 3.6 MB</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>
+                      </div>
+                      <div>
+                        <div class="detail-section-label">Upgrade pathways</div>
+                        <div style="font-size:12px;color:var(--text-3)">No upgrades currently available</div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ ACCOUNT SETTINGS — Profile + Dealer combined ══ -->
+      <div class="page" id="page-account">
+        <div class="profile-grid">
+          <div class="profile-avatar-card">
+            <div class="profile-avatar-big">JD</div>
+            <div class="profile-name">John Doe</div>
+            <div class="profile-meta">john@example.com · +1 (559) 555-0123</div>
+            <div class="profile-tag">Customer account</div>
+            <div class="dealer-tag">
+              <i class="ti ti-building-store" style="font-size:16px;color:var(--text-3)"></i>
+              <div>
+                <div style="font-size:12px;font-weight:500">WG — Western Group</div>
+                <div style="font-size:11px;color:var(--text-3)">Assigned dealer</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Personal info -->
+            <div class="card">
+              <div class="card-header">
+                <div><div class="card-title">Personal information</div></div>
+                <button class="eq-action-btn"><i class="ti ti-edit" style="font-size:13px"></i> Edit</button>
+              </div>
+              <div class="form-row">
+                <div class="form-field"><label>First name</label><input type="text" value="John" /></div>
+                <div class="form-field"><label>Last name</label><input type="text" value="Doe" /></div>
+              </div>
+              <div class="form-row full" style="margin-bottom:14px">
+                <div class="form-field"><label>Email</label><input type="email" value="john@example.com" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-field"><label>Phone</label><input type="tel" value="+1 (559) 555-0123" /></div>
+                <div class="form-field"><label>Company</label><input type="text" value="Doe Family Farm" /></div>
+              </div>
+              <div style="margin-top:6px">
+                <button class="btn-modal-primary" style="width:auto;padding:0 20px" onclick="showToast('Profile updated successfully')">Save changes</button>
+              </div>
+            </div>
+
+            <!-- ShipTo -->
+            <div class="card">
+              <div class="card-header"><div class="card-title">Linked ShipTo account</div></div>
+              <div style="background:var(--green-light);border:1px solid #bbf7d0;border-radius:7px;padding:12px;display:flex;align-items:center;gap:10px">
+                <i class="ti ti-circle-check" style="color:var(--green);font-size:20px;flex-shrink:0"></i>
+                <div>
+                  <div style="font-size:13px;font-weight:500;color:var(--green)">Doe Family Farm — FRESNO CA</div>
+                  <div style="font-size:11px;color:#166534;margin-top:2px">Linked to Flory GP record · Customer Master synced via Dataverse</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dealer — combined on same page -->
+            <div class="card">
+              <div class="card-header">
+                <div><div class="card-title">Dealer assignment</div><div class="card-subtitle">Profile &amp; dealer management combined on this page</div></div>
+              </div>
+              <div style="background:var(--green-light);border:1px solid #bbf7d0;border-radius:8px;padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+                <div style="width:44px;height:44px;background:#16a34a;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;flex-shrink:0">WG</div>
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--green)">Western Group</div>
+                  <div style="font-size:12px;color:#166534;margin-top:2px">Current dealer · Code: WG</div>
+                </div>
+              </div>
+              <div class="form-field" style="margin-bottom:14px">
+                <label>Change dealer</label>
+                <select id="dealer-select">
+                  <option value="WG" selected>WG — Western Group</option>
+                  <option value="PRTS">PRTS — Parts &amp; Service</option>
+                  <option value="RBT">RBT — Robertson Tractor</option>
+                  <option value="WARR">WARR — Warranty Dealer</option>
+                </select>
+                <span style="font-size:11px;color:var(--text-3);margin-top:4px;display:block">Dealer codes standardised per Customer Master: WG, PRTS, RBT, WARR</span>
+              </div>
+              <button class="btn-modal-primary" style="width:auto;padding:0 20px" onclick="showToast('Dealer preference updated')">Update dealer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ADD MACHINE MODAL -->
+<div class="modal-backdrop" id="add-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Register new equipment</div>
+      <button class="modal-close" onclick="closeAddMachine()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="section-divider" style="margin-top:0">Equipment identification</div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Model code <span style="color:var(--red)">*</span></label>
+        <select id="modal-model" onchange="onModelChange()">
+          <option value="">Select model code</option>
+          <option value="V62">V62 — Super V62 Sweeper</option>
+          <option value="8772">8772 — Self-Propelled Harvester</option>
+          <option value="CP8700">CP8700 — Conditioner</option>
+          <option value="VR700">VR700 — Shaker w/ Synergy Blower</option>
+          <option value="8550">8550 — SP Harvester</option>
+          <option value="VX240">VX240 — Ultra Low Dust PTO Harvester</option>
+          <option value="C7">C7 — Shaker</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Serial number <span style="color:var(--red)">*</span></label>
+        <input type="text" id="modal-serial" placeholder="Enter serial number" oninput="onSerialInput()" />
+        <div id="serial-validate-msg" style="display:none"></div>
+      </div>
+    </div>
+    <div class="section-divider">User-defined fields</div>
+    <div class="form-row">
+      <div class="form-field"><label>Year</label><input type="text" id="m-year" placeholder="e.g. 2022" /></div>
+      <div class="form-field"><label>Make</label><input type="text" id="m-make" placeholder="Flory" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Model (user field)</label><input type="text" id="m-umodel" placeholder="MODEL" /></div>
+      <div class="form-field"><label>ESN / VIN</label><input type="text" id="m-vin" placeholder="ESN or VIN" /></div>
+    </div>
+    <div class="form-row full" style="margin-bottom:0">
+      <div class="form-field"><label>Other notes</label><textarea id="m-other" placeholder="Any additional identification details"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeAddMachine()">Cancel</button>
+      <button class="btn-modal-primary" onclick="addMachine()">Validate &amp; register</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="ti ti-circle-check" style="font-size:17px;color:#4ade80"></i>
+  <span id="toast-msg">Done</span>
+</div>
+
+<script>
+var expandCount = 4;
+
+function doLogin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('register-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'flex';
+}
+function doLogout() {
+  document.getElementById('app-shell').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+function showRegister() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('register-screen').style.display = 'flex';
+}
+function backToLogin() {
+  document.getElementById('register-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var titles = { machinery:'My Equipment', account:'Account Settings' };
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+  document.getElementById('topbar-add-btn').style.display = name === 'machinery' ? 'flex' : 'none';
+}
+
+function toggleExpand(id, mainRow) {
+  var panel = document.getElementById(id);
+  var isOpen = panel.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.eq-expand-row').forEach(function(r){ r.classList.remove('open'); });
+  document.querySelectorAll('.eq-main-row').forEach(function(r){ r.classList.remove('open'); });
+  if(!isOpen) {
+    panel.classList.add('open');
+    mainRow.classList.add('open');
+  }
+}
+
+function removeMachine(btn) {
+  var mainRow = btn.closest('tr');
+  // find the expand row (next sibling)
+  var expandRow = mainRow.nextElementSibling;
+  if(mainRow) mainRow.remove();
+  if(expandRow && expandRow.classList.contains('eq-expand-row')) expandRow.remove();
+  // update badge count
+  var count = document.querySelectorAll('.eq-main-row').length;
+  document.getElementById('equip-count').textContent = count;
+  showToast('Equipment removed');
+}
+
+function openAddMachine() { document.getElementById('add-modal').classList.add('open'); }
+function closeAddMachine() {
+  document.getElementById('add-modal').classList.remove('open');
+  document.getElementById('serial-validate-msg').style.display = 'none';
+  document.getElementById('modal-model').value = '';
+  document.getElementById('modal-serial').value = '';
+}
+
+var valTimer;
+function onModelChange() { document.getElementById('modal-serial').value = ''; document.getElementById('serial-validate-msg').style.display = 'none'; }
+function onSerialInput() {
+  clearTimeout(valTimer);
+  var msg = document.getElementById('serial-validate-msg');
+  var model = document.getElementById('modal-model').value;
+  var serial = document.getElementById('modal-serial').value;
+  if(!model || serial.length < 3) { msg.style.display = 'none'; return; }
+  msg.className = 'validate-row checking';
+  msg.innerHTML = '<i class="ti ti-loader" style="font-size:15px"></i> Validating against Dataverse CE Assets...';
+  msg.style.display = 'flex';
+  valTimer = setTimeout(function(){
+    msg.className = 'validate-row ok';
+    msg.innerHTML = '<i class="ti ti-circle-check" style="font-size:15px"></i> Valid — ' + model + ' serial found in GP Equipment Master';
+  }, 1100);
+}
+
+function addMachine() {
+  var model = document.getElementById('modal-model').value;
+  var serial = document.getElementById('modal-serial').value;
+  if(!model || !serial) { showToast('Please select a model and enter a serial number'); return; }
+  var year = document.getElementById('m-year').value || '—';
+  expandCount++;
+  var eid = 'eq' + expandCount;
+  var tbody = document.getElementById('machine-tbody');
+
+  var mainRow = document.createElement('tr');
+  mainRow.className = 'eq-main-row';
+  mainRow.setAttribute('onclick', "toggleExpand('" + eid + "',this)");
+  mainRow.innerHTML =
+    '<td><div class="eq-model-name">' + model + '</div><div class="eq-serial">Model: ' + model + '</div></td>' +
+    '<td style="font-family:monospace;font-size:12px">' + serial + '</td>' +
+    '<td><span class="badge green"><i class="ti ti-circle-check" style="font-size:10px"></i> Valid</span></td>' +
+    '<td>' + year + '</td>' +
+    '<td><span class="badge gray">WG</span></td>' +
+    '<td onclick="event.stopPropagation()" style="display:flex;gap:6px;padding:13px 14px"><button class="eq-action-btn danger" onclick="removeMachine(this)"><i class="ti ti-trash" style="font-size:13px"></i> Remove</button></td>' +
+    '<td style="text-align:center"><i class="ti ti-chevron-down expand-chevron"></i></td>';
+
+  var expandRow = document.createElement('tr');
+  expandRow.className = 'eq-expand-row';
+  expandRow.id = eid;
+  expandRow.innerHTML =
+    '<td colspan="7" style="padding:0"><div class="eq-expand-panel"><div class="expand-grid">' +
+    '<div><div class="detail-section-label">Equipment details</div>' +
+    '<div class="detail-field"><div class="detail-label">Model code</div><div class="detail-val">' + model + '</div></div>' +
+    '<div class="detail-field"><div class="detail-label">Primary serial</div><div class="detail-val" style="font-family:monospace">' + serial + '</div></div>' +
+    '<div class="detail-field"><div class="detail-label">Year</div><div class="detail-val">' + year + '</div></div></div>' +
+    '<div><div class="detail-section-label">Manuals — ' + model + ' model code</div>' +
+    ['Parts Manual','Operator\'s Manual','Electrical Manual','HM Manual'].map(function(m){ return '<div class="doc-inline-item"><div class="doc-icon-box"><i class="ti ti-file-description"></i></div><div style="flex:1"><div class="doc-name">' + m + '</div><div class="doc-meta">' + model + ' · PDF</div></div><i class="ti ti-download" style="color:var(--text-3);font-size:16px"></i></div>'; }).join('') +
+    '</div><div><div class="detail-section-label">Upgrade pathways</div><div style="font-size:12px;color:var(--text-3)">Checking availability...</div></div>' +
+    '</div></div></td>';
+
+  tbody.appendChild(mainRow);
+  tbody.appendChild(expandRow);
+
+  var count = document.querySelectorAll('.eq-main-row').length;
+  document.getElementById('equip-count').textContent = count;
+  closeAddMachine();
+  showToast(model + ' registered successfully');
+}
+
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+var shiptoTimer;
+function validateShipTo() {
+  clearTimeout(shiptoTimer);
+  var val = document.getElementById('reg-shipto').value;
+  var ok = document.getElementById('shipto-ok');
+  ok.style.display = 'none';
+  if(val.length > 4) { shiptoTimer = setTimeout(function(){ ok.style.display = 'flex'; }, 900); }
+}
+</script>
+</body>
+</html>
